@@ -3,7 +3,11 @@ import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 
-export function setupPerformanceOptimizations(scene, renderer) {
+export function setupPerformanceOptimizations(scene) {
+    if (!(scene instanceof THREE.Scene)) {
+        console.error('Invalid scene passed to setupPerformanceOptimizations:', scene);
+        return;
+    }
     // Initialize performance monitoring
     const stats = new Stats();
     stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
