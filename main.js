@@ -12,8 +12,6 @@ import { setupDJBooth } from './modules/djBooth.js';
 import { setupMultiplayer } from './modules/multiplayer.js';
 import { setupAudioSync } from './modules/audioSync.js';
 import { setupPerformanceOptimizations } from './modules/performance.js';
-import { MotionBlurPass } from 'three/examples/jsm/postprocessing/MotionBlurPass.js';
-import { ChromaticAberrationPass } from 'three/examples/jsm/postprocessing/ChromaticAberrationPass.js';
 
 let scene, camera, renderer, composer;
 
@@ -37,16 +35,6 @@ function init() {
     composer.addPass(new RenderPass(scene, camera));
     const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
     composer.addPass(bloomPass);
-
-    // Add motion blur pass
-    const motionBlurPass = new MotionBlurPass(scene, camera, {
-        samples: 30
-    });
-    composer.addPass(motionBlurPass);
-
-    // Add chromatic aberration pass
-    const chromaticAberrationPass = new ChromaticAberrationPass();
-    composer.addPass(chromaticAberrationPass);
 
     setupClubStructure(scene);
     setupLighting(scene);
