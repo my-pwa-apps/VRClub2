@@ -1,9 +1,9 @@
-import * as THREE from './node_modules/three/build/three.module.js';
-import { VRButton } from './node_modules/three/examples/jsm/webxr/VRButton.js';
-import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
-import { EffectComposer } from './node_modules/three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from './node_modules/three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from './node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js';
+import { VRButton } from 'https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/webxr/VRButton.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/controls/OrbitControls.js';
+import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { setupClubStructure } from './modules/clubStructure.js';
 import { setupLighting } from './modules/lighting.js';
 import { setupLasers } from './modules/lasers.js';
