@@ -14,6 +14,8 @@ export function setupAudioSync(scene) {
         sound.setBuffer(buffer);
         sound.setLoop(true);
         sound.setVolume(0.5);
+    }, undefined, function(error) {
+        console.error('An error occurred while loading the audio file:', error);
     });
 
     // Create audio analyzer

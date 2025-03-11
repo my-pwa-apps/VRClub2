@@ -5,7 +5,7 @@ export function setupMultiplayer(scene) {
     console.log('Multiplayer setup not implemented yet.');
 
     // WebSocket connection
-    const socket = new WebSocket('wss://your-websocket-server-url');
+    const socket = new WebSocket('wss://example-websocket-server-url');
 
     socket.onopen = () => {
         console.log('WebSocket connection established');

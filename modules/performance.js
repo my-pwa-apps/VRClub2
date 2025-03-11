@@ -10,7 +10,11 @@ export function setupPerformanceOptimizations(scene, renderer) {
     scene.add(lod);
 
     // Frustum culling
-    renderer.setFrustumCulling(true);
+    scene.traverse((object) => {
+        if (object.isMesh) {
+            object.frustumCulled = true;
+        }
+    });
 
     // GPU-efficient instancing
     const instanceGeometry = new THREE.InstancedBufferGeometry().copy(new THREE.BoxBufferGeometry(1, 1, 1));
