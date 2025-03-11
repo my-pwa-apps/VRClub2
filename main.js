@@ -22,19 +22,16 @@ function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     
-    // Enhanced renderer with better performance settings
     renderer = new THREE.WebGLRenderer({ 
         antialias: true,
         powerPreference: 'high-performance',
         alpha: false
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for better performance
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.xr.enabled = true;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    
-    // Updated from deprecated outputEncoding to the new approach
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     
     document.body.appendChild(renderer.domElement);
@@ -44,22 +41,40 @@ function init() {
     controls.target.set(0, 1.6, 0);
     controls.update();
 
-    // Initial camera position setup
     camera.position.set(0, 1.6, 5);
     
-    composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
+    // Setup separate composers for VR and non-VR
+    const renderPass = new RenderPass(scene, camera);
     
-    // Optimized bloom pass with better performance settings
+    // Main composer for non-VR
+    composer = new EffectComposer(renderer);
+    composer.addPass(renderPass);
+    
     const bloomPass = new UnrealBloomPass(
         new THREE.Vector2(window.innerWidth, window.innerHeight),
-        1.5,  // strength
-        0.4,  // radius
-        0.85  // threshold
+        1.0,
+        0.4,
+        0.85
     );
     composer.addPass(bloomPass);
+    
+    // Store references for cleanup
+    scene.userData.composer = composer;
+    scene.userData.bloomPass = bloomPass;
+    scene.userData.renderPass = renderPass;
 
-    // Setup all club components
+    // VR mode handling
+    renderer.xr.addEventListener('sessionstart', function () {
+        renderer.setPixelRatio(1);
+        bloomPass.strength = 0.7;
+    });
+
+    renderer.xr.addEventListener('sessionend', function () {
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        bloomPass.strength = 1.0;
+    });
+
+    // Setup components
     setupClubStructure(scene);
     setupLighting(scene);
     setupLasers(scene);
@@ -69,8 +84,31 @@ function init() {
     setupAudioSync(scene);
     setupPerformanceOptimizations(scene, renderer);
 
-    // Handle window resizing
     window.addEventListener('resize', onWindowResize, false);
+    
+    // Add cleanup function
+    window.addEventListener('beforeunload', cleanup);
+}
+
+function cleanup() {
+    // Cleanup composers and passes
+    if (scene.userData.composer) {
+        scene.userData.composer.dispose();
+    }
+    if (scene.userData.bloomPass) {
+        scene.userData.bloomPass.dispose();
+    }
+    if (scene.userData.renderPass) {
+        scene.userData.renderPass.dispose();
+    }
+    
+    // Cleanup other components
+    if (scene.userData.cleanupMultiplayer) {
+        scene.userData.cleanupMultiplayer();
+    }
+    if (scene.userData.cleanupPerformance) {
+        scene.userData.cleanupPerformance();
+    }
 }
 
 function onWindowResize() {
@@ -85,24 +123,20 @@ function animate() {
 }
 
 function render() {
-    // Call all animation update functions if they exist
-    if (scene.userData.updateAudio) {
-        scene.userData.updateAudio();
+    const xrEnabled = renderer.xr.enabled && renderer.xr.isPresenting;
+    
+    // Update components
+    if (scene.userData.updateAudio) scene.userData.updateAudio();
+    if (scene.userData.animateLights) scene.userData.animateLights();
+    if (scene.userData.animateLasers) scene.userData.animateLasers();
+    if (scene.userData.animateFog) scene.userData.animateFog();
+    if (scene.userData.sendAvatarUpdate) scene.userData.sendAvatarUpdate();
+    if (scene.userData.optimizePerformance) scene.userData.optimizePerformance();
+    
+    // Render with or without post-processing based on VR state
+    if (xrEnabled) {
+        renderer.render(scene, camera);
+    } else {
+        composer.render();
     }
-    if (scene.userData.animateLights) {
-        scene.userData.animateLights();
-    }
-    if (scene.userData.animateLasers) {
-        scene.userData.animateLasers();
-    }
-    if (scene.userData.animateFog) {
-        scene.userData.animateFog();
-    }
-    if (scene.userData.sendAvatarUpdate) {
-        scene.userData.sendAvatarUpdate();
-    }
-    if (scene.userData.optimizePerformance) {
-        scene.userData.optimizePerformance();
-    }
-    composer.render();
 }
