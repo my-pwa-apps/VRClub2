@@ -60,5 +60,8 @@ function animate() {
 }
 
 function render() {
+    if (scene.userData.updateAudio) {
+        scene.userData.updateAudio();
+    }
     composer.render();
 }
