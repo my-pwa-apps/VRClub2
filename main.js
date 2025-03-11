@@ -127,3 +127,6 @@ function render() {
         composer.render();
     }
 }
+
+init();
+animate();
