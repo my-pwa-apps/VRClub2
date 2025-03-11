@@ -4,7 +4,7 @@ function setupPerformanceOptimizations(scene) {
         return;
     }
 
-    const object = scene.getObjectByType(THREE.Mesh);
+    const object = scene.getObjectByProperty('type', 'Mesh');
     if (object) {
         // ...existing code...
     }
