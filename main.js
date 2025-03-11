@@ -80,6 +80,7 @@ function init() {
     setupMultiplayer(scene);
     setupAudioSync(scene);
     
+    console.log('Scene instance:', scene, scene instanceof THREE.Scene);
     setupPerformanceOptimizations(scene);
 
     window.addEventListener('resize', onWindowResize, false);
