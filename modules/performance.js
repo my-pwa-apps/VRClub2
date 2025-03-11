@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 export function setupPerformanceOptimizations(scene, renderer) {
     // Level of Detail (LOD)
@@ -28,6 +30,18 @@ export function setupPerformanceOptimizations(scene, renderer) {
         mesh.setMatrixAt(i, dummy.matrix);
     }
     scene.add(mesh);
+
+    // Compressed textures (KTX2)
+    const ktx2Loader = new KTX2Loader();
+    ktx2Loader.setTranscoderPath('https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/libs/basis/');
+    ktx2Loader.detectSupport(renderer);
+
+    // Load a sample compressed texture
+    ktx2Loader.load('path/to/texture.ktx2', function(texture) {
+        const material = new THREE.MeshStandardMaterial({ map: texture });
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
+        scene.add(mesh);
+    });
 
     // Function to optimize performance
     function optimizePerformance() {

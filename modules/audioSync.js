@@ -8,16 +8,6 @@ export function setupAudioSync(scene) {
     // Create a global audio source
     const sound = new THREE.Audio(listener);
 
-    // Load a sound and set it as the Audio object's buffer
-    const audioLoader = new THREE.AudioLoader();
-    audioLoader.load('./audio/techno.mp3', function(buffer) {
-        sound.setBuffer(buffer);
-        sound.setLoop(true);
-        sound.setVolume(0.5);
-    }, undefined, function(error) {
-        console.error('An error occurred while loading the audio file:', error);
-    });
-
     // Create audio analyzer
     const analyser = new THREE.AudioAnalyser(sound, 32);
 
