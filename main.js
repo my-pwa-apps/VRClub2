@@ -13,10 +13,7 @@ import { setupMultiplayer } from './modules/multiplayer.js';
 import { setupAudioSync } from './modules/audioSync.js';
 import { setupPerformanceOptimizations } from './modules/performance.js';
 
-let scene, camera, renderer, composer;
-
-init();
-animate();
+let scene;
 
 function init() {
     scene = new THREE.Scene();
@@ -82,6 +79,7 @@ function init() {
     setupDJBooth(scene);
     setupMultiplayer(scene);
     setupAudioSync(scene);
+    
     setupPerformanceOptimizations(scene);
 
     window.addEventListener('resize', onWindowResize, false);
