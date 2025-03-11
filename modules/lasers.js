@@ -10,49 +10,61 @@ export function setupLasers(scene) {
     
     // Create laser materials with different colors for variety
     const laserMaterials = [
-        new THREE.LineBasicMaterial({ color: 0x00ff00 }), // Green
-        new THREE.LineBasicMaterial({ color: 0xff0000 }), // Red
-        new THREE.LineBasicMaterial({ color: 0x0000ff })  // Blue
+        new THREE.LineBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.8 }), // Green
+        new THREE.LineBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.8 }), // Red
+        new THREE.LineBasicMaterial({ color: 0x0000ff, transparent: true, opacity: 0.8 })  // Blue
     ];
     
-    // Laser emitters and beams (pre-create the beams to avoid creating new objects every frame)
+    // Laser emitters and beams
     const laserEmitters = [];
-    const laserBeams = [];
+    const activeBeams = new Set(); // Track active beams for cleanup
     
+    // Create emitters
     for (let i = 0; i < 10; i++) {
-        // Create emitter (position only)
         const emitter = new THREE.Object3D();
         emitter.position.set(Math.random() * 50 - 25, Math.random() * 10, Math.random() * 50 - 25);
         laserEmitters.push(emitter);
-        scene.add(emitter);
-        
-        // Create beam attached to this emitter (reuse these objects)
-        const material = laserMaterials[i % laserMaterials.length];
-        const laserBeam = new THREE.Line(laserGeometry, material);
-        laserBeam.position.copy(emitter.position);
-        laserBeams.push(laserBeam);
-        scene.add(laserBeam);
     }
 
     // Function to animate lasers
     function animateLasers() {
         const time = Date.now() * 0.001;
         
+        // Remove old beams that have faded out
+        activeBeams.forEach(beam => {
+            if (beam.material.opacity <= 0) {
+                scene.remove(beam);
+                activeBeams.delete(beam);
+                beam.geometry.dispose();
+                beam.material.dispose();
+            }
+        });
+        
+        // Update or create new beams
         laserEmitters.forEach((emitter, index) => {
             // Update emitter rotation
             emitter.rotation.y = time * (index % 2 === 0 ? 1 : -1);
             
-            // Update corresponding laser beam
-            const laserBeam = laserBeams[index];
-            laserBeam.position.copy(emitter.position);
-            laserBeam.rotation.copy(emitter.rotation);
-            
-            // Add some variation to the beams
-            laserBeam.scale.y = 1 + Math.sin(time * 2 + index) * 0.3;
-            
-            // Toggle visibility occasionally for strobe effect
+            // Only create new beam occasionally
             if (Math.random() > 0.95) {
-                laserBeam.visible = !laserBeam.visible;
+                const material = laserMaterials[index % laserMaterials.length].clone();
+                material.opacity = 0.8; // Start fully visible
+                
+                const laserBeam = new THREE.Line(laserGeometry, material);
+                laserBeam.position.copy(emitter.position);
+                laserBeam.rotation.copy(emitter.rotation);
+                laserBeam.userData.creationTime = time; // Store creation time
+                
+                scene.add(laserBeam);
+                activeBeams.add(laserBeam);
+            }
+        });
+        
+        // Fade out existing beams
+        activeBeams.forEach(beam => {
+            const age = time - beam.userData.creationTime;
+            if (age > 0.5) { // Start fading after 0.5 seconds
+                beam.material.opacity = Math.max(0, beam.material.opacity - 0.02);
             }
         });
     }
