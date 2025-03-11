@@ -36,16 +36,39 @@ export function setupPerformanceOptimizations(scene, renderer) {
     ktx2Loader.setTranscoderPath('https://cdn.jsdelivr.net/npm/three@0.174.0/examples/jsm/libs/basis/');
     ktx2Loader.detectSupport(renderer);
 
-    // Load a sample compressed texture
-    ktx2Loader.load('path/to/texture.ktx2', function(texture) {
-        const material = new THREE.MeshStandardMaterial({ map: texture });
-        const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
-        scene.add(mesh);
-    });
+    // Only try to load compressed textures if we have actual files
+    try {
+        // Create a fallback material in case loading fails
+        const fallbackMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 });
+        const fallbackMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), fallbackMaterial);
+        fallbackMesh.position.set(2, 1, 2);
+        scene.add(fallbackMesh);
+        
+        // Comment out the KTX2 loading for now since we don't have actual texture files
+        /* 
+        ktx2Loader.load('textures/sample.ktx2', function(texture) {
+            const material = new THREE.MeshStandardMaterial({ map: texture });
+            const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
+            mesh.position.set(0, 1, 0);
+            scene.add(mesh);
+        }, undefined, function(error) {
+            console.warn('Failed to load KTX2 texture:', error);
+        });
+        */
+    } catch (error) {
+        console.warn('KTX2Loader error:', error);
+    }
 
     // Function to optimize performance
     function optimizePerformance() {
-        // Implement any additional performance optimizations here
+        // Implement dynamic LOD based on distance from camera
+        scene.traverse((object) => {
+            if (object instanceof THREE.LOD) {
+                // Update LOD levels if needed
+            }
+        });
+        
+        // Additional runtime optimizations can be added here
     }
 
     // Add the optimize function to the scene's userData for animation loop access
