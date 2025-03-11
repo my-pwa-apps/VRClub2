@@ -21,9 +21,19 @@ animate();
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    
+    // Enhanced renderer with better performance settings
+    renderer = new THREE.WebGLRenderer({ 
+        antialias: true,
+        powerPreference: 'high-performance',
+        alpha: false
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for better performance
     renderer.xr.enabled = true;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
     document.body.appendChild(renderer.domElement);
     document.body.appendChild(VRButton.createButton(renderer));
 
@@ -31,9 +41,19 @@ function init() {
     controls.target.set(0, 1.6, 0);
     controls.update();
 
+    // Initial camera position setup
+    camera.position.set(0, 1.6, 5);
+    
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+    
+    // Optimized bloom pass with better performance settings
+    const bloomPass = new UnrealBloomPass(
+        new THREE.Vector2(window.innerWidth, window.innerHeight),
+        1.5,  // strength
+        0.4,  // radius
+        0.85  // threshold
+    );
     composer.addPass(bloomPass);
 
     setupClubStructure(scene);
@@ -60,6 +80,7 @@ function animate() {
 }
 
 function render() {
+    // Call all animation update functions if they exist
     if (scene.userData.updateAudio) {
         scene.userData.updateAudio();
     }
