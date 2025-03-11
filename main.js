@@ -82,7 +82,7 @@ function init() {
     setupDJBooth(scene);
     setupMultiplayer(scene);
     setupAudioSync(scene);
-    setupPerformanceOptimizations(scene, renderer);
+    setupPerformanceOptimizations(scene);
 
     window.addEventListener('resize', onWindowResize, false);
     
