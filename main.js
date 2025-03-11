@@ -13,7 +13,7 @@ import { setupMultiplayer } from './modules/multiplayer.js';
 import { setupAudioSync } from './modules/audioSync.js';
 import { setupPerformanceOptimizations } from './modules/performance.js';
 
-let scene;
+let scene, camera, renderer, composer, controls;
 
 function init() {
     scene = new THREE.Scene();
@@ -34,7 +34,7 @@ function init() {
     document.body.appendChild(renderer.domElement);
     document.body.appendChild(VRButton.createButton(renderer));
 
-    const controls = new OrbitControls(camera, renderer.domElement);
+    controls = new OrbitControls(camera, renderer.domElement);
     controls.target.set(0, 1.6, 0);
     controls.update();
 
@@ -83,30 +83,19 @@ function init() {
     setupPerformanceOptimizations(scene);
 
     window.addEventListener('resize', onWindowResize, false);
-    
-    // Add cleanup function
     window.addEventListener('beforeunload', cleanup);
 }
 
 function cleanup() {
     // Cleanup composers and passes
-    if (scene.userData.composer) {
-        scene.userData.composer.dispose();
-    }
-    if (scene.userData.bloomPass) {
-        scene.userData.bloomPass.dispose();
-    }
-    if (scene.userData.renderPass) {
-        scene.userData.renderPass.dispose();
-    }
-    
-    // Cleanup other components
-    if (scene.userData.cleanupMultiplayer) {
-        scene.userData.cleanupMultiplayer();
-    }
-    if (scene.userData.cleanupPerformance) {
-        scene.userData.cleanupPerformance();
-    }
+    if (scene.userData.composer) scene.userData.composer.dispose();
+    if (scene.userData.bloomPass) scene.userData.bloomPass.dispose();
+    if (scene.userData.renderPass) scene.userData.renderPass.dispose();
+
+    if (controls) controls.dispose();
+
+    if (scene.userData.cleanupMultiplayer) scene.userData.cleanupMultiplayer();
+    if (scene.userData.cleanupPerformance) scene.userData.cleanupPerformance();
 }
 
 function onWindowResize() {
