@@ -50,8 +50,31 @@ export function setupAudioSync(scene) {
         }
     }
 
-    // Add the update function to the scene's userData for animation loop access
+    // Function for beat detection
+    function detectBeat() {
+        const data = analyser.getFrequencyData();
+        const bass = data.slice(0, 5).reduce((a, b) => a + b, 0) / 5;
+        if (bass > 200) {
+            // Trigger beat reaction
+            scene.userData.onBeat();
+        }
+    }
+
+    // Function for ambient bass vibrations
+    function ambientBassVibrations() {
+        const data = analyser.getFrequencyData();
+        const bass = data.slice(0, 5).reduce((a, b) => a + b, 0) / 5;
+        scene.children.forEach((child) => {
+            if (child.isMesh) {
+                child.position.y = Math.sin(Date.now() * 0.01) * (bass / 256);
+            }
+        });
+    }
+
+    // Add the update functions to the scene's userData for animation loop access
     scene.userData.updateAudio = updateVisualizers;
+    scene.userData.detectBeat = detectBeat;
+    scene.userData.ambientBassVibrations = ambientBassVibrations;
 
     // Button to start audio (needed due to browser autoplay policies)
     const startButton = document.createElement('button');

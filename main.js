@@ -63,5 +63,20 @@ function render() {
     if (scene.userData.updateAudio) {
         scene.userData.updateAudio();
     }
+    if (scene.userData.animateLights) {
+        scene.userData.animateLights();
+    }
+    if (scene.userData.animateLasers) {
+        scene.userData.animateLasers();
+    }
+    if (scene.userData.animateFog) {
+        scene.userData.animateFog();
+    }
+    if (scene.userData.sendAvatarUpdate) {
+        scene.userData.sendAvatarUpdate();
+    }
+    if (scene.userData.optimizePerformance) {
+        scene.userData.optimizePerformance();
+    }
     composer.render();
 }
