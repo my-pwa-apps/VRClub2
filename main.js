@@ -17,6 +17,7 @@ let scene, camera, renderer, composer, controls;
 
 function init() {
     scene = new THREE.Scene();
+
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     
     renderer = new THREE.WebGLRenderer({ 
