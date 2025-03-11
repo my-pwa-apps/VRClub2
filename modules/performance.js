@@ -17,7 +17,7 @@ export function setupPerformanceOptimizations(scene, renderer) {
     });
 
     // GPU-efficient instancing
-    const instanceGeometry = new THREE.InstancedBufferGeometry().copy(new THREE.BoxBufferGeometry(1, 1, 1));
+    const instanceGeometry = new THREE.InstancedBufferGeometry().copy(new THREE.BoxGeometry(1, 1, 1));
     const instanceMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
     const instanceCount = 100;
     const mesh = new THREE.InstancedMesh(instanceGeometry, instanceMaterial, instanceCount);
