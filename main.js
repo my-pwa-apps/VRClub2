@@ -33,7 +33,10 @@ function init() {
     renderer.xr.enabled = true;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.outputEncoding = THREE.sRGBEncoding;
+    
+    // Updated from deprecated outputEncoding to the new approach
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    
     document.body.appendChild(renderer.domElement);
     document.body.appendChild(VRButton.createButton(renderer));
 
@@ -56,6 +59,7 @@ function init() {
     );
     composer.addPass(bloomPass);
 
+    // Setup all club components
     setupClubStructure(scene);
     setupLighting(scene);
     setupLasers(scene);
@@ -65,6 +69,7 @@ function init() {
     setupAudioSync(scene);
     setupPerformanceOptimizations(scene, renderer);
 
+    // Handle window resizing
     window.addEventListener('resize', onWindowResize, false);
 }
 
